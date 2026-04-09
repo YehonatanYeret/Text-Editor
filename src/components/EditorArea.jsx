@@ -17,6 +17,8 @@ function EditorArea({
   onFontSizeChange,
   onColorChange,
   onFontFamilyChange,
+  onSave,
+  onOpen,
 }) {
   return (
     <section className="editor-area" aria-label="Virtual keyboard editor">
@@ -40,6 +42,8 @@ function EditorArea({
             onFontSizeChange={onFontSizeChange}
             onColorChange={onColorChange}
             onFontFamilyChange={onFontFamilyChange}
+            onSave={onSave}
+            onOpen={onOpen}
           />
         </div>
       </div>

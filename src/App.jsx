@@ -71,6 +71,36 @@ function App() {
     setTextStyle((prev) => ({ ...prev, fontFamily }));
   }
 
+  /**
+   * Part B:
+   */
+  function saveFile() {
+  const name = prompt("insert file name to save:");
+  if (!name) return; 
+
+  const dataToSave = {
+    text: text,
+    textStyle: textStyle
+  };
+
+  localStorage.setItem(name, JSON.stringify(dataToSave));
+  alert(`File "${name}" saved successfully!`);
+ }
+
+ function openFile() {
+  const name = prompt("insert file name to open:");
+  const savedData = localStorage.getItem(name);
+
+  if (savedData) {
+    const parsedData = JSON.parse(savedData);
+    setText(parsedData.text);
+    setTextStyle(parsedData.textStyle);
+    alert(`File "${name}" loaded!`);
+  } else {
+    alert("File not found.");
+  }
+ }
+
   return (
     <div className="app">
       <DisplayArea text={text} textStyle={textStyle} />
@@ -85,6 +115,8 @@ function App() {
         onFontSizeChange={changeFontSize}
         onColorChange={changeTextColor}
         onFontFamilyChange={changeFontFamily}
+        onSave={saveFile}
+        onOpen={openFile}
       />
     </div>
   );

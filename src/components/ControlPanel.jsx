@@ -54,6 +54,8 @@ function ControlPanel({
   onFontSizeChange,
   onColorChange,
   onFontFamilyChange,
+  onSave,
+  onOpen,
 }) {
   const languageOptions = getLanguageOptions();
   const fontSizeOptions = getFontSizeOptions();
@@ -140,6 +142,25 @@ function ControlPanel({
               {option.label}
             </button>
           ))}
+        </div>
+      </div>
+      <div className="control-panel__group">
+        <p className="control-panel__label">File Actions</p>
+        <div className="control-panel__buttons">
+          <button 
+            type="button" 
+            className="control-panel__button" 
+            onClick={onSave}
+          >
+            Save File
+          </button>
+          <button 
+            type="button" 
+            className="control-panel__button" 
+            onClick={onOpen}
+          >
+            Open File
+          </button>
         </div>
       </div>
     </div>
