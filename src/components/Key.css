@@ -1,0 +1,33 @@
+.key-button {
+  min-width: 2.3rem;
+  height: 2.3rem;
+  padding: 0.45rem 0.55rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #c0caf5;
+  background: #2a2e42;
+  border: 1px solid #565f89;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.key-button:hover {
+  background: #3b4261;
+}
+
+.key-button:active {
+  transform: translateY(1px);
+}
+
+.key-button--action {
+  width: 100%;
+  min-width: 8.7rem;
+  justify-self: stretch;
+  color: #f5c2e7;
+  border-color: #9d7cd8;
+}
+
+.key-button--space {
+  min-width: min(60vw, 22rem);
+  height: 2rem;
+}

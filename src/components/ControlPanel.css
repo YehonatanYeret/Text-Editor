@@ -1,0 +1,51 @@
+.control-panel {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.control-panel__title {
+  margin: 0;
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #bb9af7;
+}
+
+.control-panel__group {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.control-panel__label {
+  margin: 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #9aa5ce;
+}
+
+.control-panel__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.control-panel__button {
+  padding: 0.4rem 0.65rem;
+  font-size: 0.86rem;
+  color: #c0caf5;
+  background: #2a2e42;
+  border: 1px solid #565f89;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.control-panel__button:hover {
+  background: #3b4261;
+}
+
+.control-panel__button--active {
+  color: #1a1b26;
+  background: #7aa2f7;
+  border-color: #7aa2f7;
+}

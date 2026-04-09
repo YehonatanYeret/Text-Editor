@@ -1,0 +1,17 @@
+.action-panel {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.action-panel__label {
+  margin: 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #9aa5ce;
+}
+
+.action-panel__buttons {
+  display: grid;
+  gap: 0.5rem;
+}
