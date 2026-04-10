@@ -1,14 +1,35 @@
 import "./DisplayArea.css";
 
-/**
- * Displays the full text output and applies the selected visual style.
- */
-function DisplayArea({ text, textStyle }) {
+function DisplayArea({ content, isActive, showClose, onFocus, onClose }) {
   return (
-    <section className="display-area">
-      <h2 className="display-area__title">Display</h2>
-      <div className="display-area__content" style={textStyle}>
-        {text}
+    <section 
+      className={`display-area ${isActive ? "display-area--active" : ""}`} 
+      onClick={onFocus}
+    >
+      <div className="display-area__header">
+        <h2 className="display-area__title">
+          {isActive ? "● Active" : "Display"}
+        </h2>
+        {showClose && (
+          <button 
+            className="display-area__close-btn" 
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
+          >
+            ×
+          </button>
+        )}
+      </div>
+      
+      <div className="display-area__content">
+        {content.map((item, index) => (
+          <span key={index} style={item.style}>
+            {item.char}
+          </span>
+        ))}
+        {content.length === 0 && <span style={{opacity: 0.5}}>Start typing...</span>}
       </div>
     </section>
   );

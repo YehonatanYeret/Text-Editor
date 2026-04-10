@@ -3,9 +3,6 @@ import ControlPanel from "./ControlPanel.jsx";
 import ActionPanel from "./ActionPanel.jsx";
 import "./EditorArea.css";
 
-/**
- * Places edit actions and display settings on the sides of the keyboard.
- */
 function EditorArea({
   language,
   onLanguageChange,
@@ -17,12 +14,13 @@ function EditorArea({
   onFontSizeChange,
   onColorChange,
   onFontFamilyChange,
+  onNew,
   onSave,
-  onOpen,
+  onOpen
 }) {
   return (
     <section className="editor-area" aria-label="Virtual keyboard editor">
-      <h2 className="editor-area__title">Keyboard</h2>
+      <h2 className="editor-area__title">Editor Controls</h2>
       <div className="editor-area__controls">
         <div className="editor-area__left-panel">
           <ActionPanel
@@ -42,6 +40,7 @@ function EditorArea({
             onFontSizeChange={onFontSizeChange}
             onColorChange={onColorChange}
             onFontFamilyChange={onFontFamilyChange}
+            onNew={onNew}
             onSave={onSave}
             onOpen={onOpen}
           />

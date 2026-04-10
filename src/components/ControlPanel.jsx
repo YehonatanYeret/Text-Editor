@@ -1,61 +1,41 @@
 import "./ControlPanel.css";
 
-/**
- * Defines the language-switch buttons for changing keyboard layout.
- */
 function getLanguageOptions() {
   return [
     { id: "english", label: "English" },
-    { id: "hebrew", label: "Hebrew" },
+    { id: "hebrew", label: "עברית" },
     { id: "emojis", label: "Emojis" },
   ];
 }
 
-/**
- * Defines font-size presets for the displayed text.
- */
 function getFontSizeOptions() {
   return [
-    { id: "small", label: "Small", value: "20px" },
-    { id: "medium", label: "Medium", value: "26px" },
-    { id: "large", label: "Large", value: "34px" },
+    { id: "fs-small", label: "Small", value: "18px" },
+    { id: "fs-medium", label: "Medium", value: "26px" },
+    { id: "fs-large", label: "Large", value: "36px" },
   ];
 }
 
-/**
- * Defines color presets for the displayed text.
- */
 function getColorOptions() {
   return [
-    { id: "light", label: "Light", value: "#e0e0e0" },
-    { id: "cyan", label: "Cyan", value: "#7dcfff" },
-    { id: "pink", label: "Pink", value: "#f5c2e7" },
+    { id: "c-white", label: "White", value: "#e0e0e0" },
+    { id: "c-blue", label: "Blue", value: "#7aa2f7" },
+    { id: "c-pink", label: "Pink", value: "#f5c2e7" },
+    { id: "c-green", label: "Green", value: "#9ece6a" },
   ];
 }
 
-/**
- * Defines font-family presets for the displayed text.
- */
 function getFontFamilyOptions() {
   return [
-    { id: "arial", label: "Arial", value: "Arial, sans-serif" },
-    { id: "georgia", label: "Georgia", value: "Georgia, serif" },
-    { id: "mono", label: "Monospace", value: "\"Courier New\", monospace" },
+    { id: "ff-sans", label: "Sans", value: "Arial, sans-serif" },
+    { id: "ff-serif", label: "Serif", value: "Georgia, serif" },
+    { id: "ff-mono", label: "Mono", value: "Courier New, monospace" },
   ];
 }
 
-/**
- * Renders the right control column with language and visual style controls.
- */
 function ControlPanel({
-  language,
-  onLanguageChange,
-  textStyle,
-  onFontSizeChange,
-  onColorChange,
-  onFontFamilyChange,
-  onSave,
-  onOpen,
+  language, onLanguageChange, textStyle, onFontSizeChange,
+  onColorChange, onFontFamilyChange, onNew, onSave, onOpen
 }) {
   const languageOptions = getLanguageOptions();
   const fontSizeOptions = getFontSizeOptions();
@@ -64,43 +44,35 @@ function ControlPanel({
 
   return (
     <div className="control-panel">
-      <p className="control-panel__title">Display Settings</p>
+      <p className="control-panel__title">Settings</p>
+      
       <div className="control-panel__group">
         <p className="control-panel__label">Language</p>
         <div className="control-panel__buttons">
-          {languageOptions.map((option) => (
-            <button
-              key={option.id}
-              type="button"
-              className={
-                language === option.id
-                  ? "control-panel__button control-panel__button--active"
-                  : "control-panel__button"
-              }
-              onClick={() => onLanguageChange(option.id)}
-            >
-              {option.label}
-            </button>
+          {languageOptions.map(opt => (
+            <button key={opt.id} type="button" 
+              className={language === opt.id ? "control-panel__button control-panel__button--active" : "control-panel__button"}
+              onClick={() => onLanguageChange(opt.id)}>{opt.label}</button>
           ))}
+        </div>
+      </div>
+
+      <div className="control-panel__group">
+        <p className="control-panel__label">File Actions</p>
+        <div className="control-panel__buttons">
+          <button type="button" className="control-panel__button" onClick={onNew}>+ New</button>
+          <button type="button" className="control-panel__button" onClick={onSave}>Save</button>
+          <button type="button" className="control-panel__button" onClick={onOpen}>Open</button>
         </div>
       </div>
 
       <div className="control-panel__group">
         <p className="control-panel__label">Font Size</p>
         <div className="control-panel__buttons">
-          {fontSizeOptions.map((option) => (
-            <button
-              key={option.id}
-              type="button"
-              className={
-                textStyle.fontSize === option.value
-                  ? "control-panel__button control-panel__button--active"
-                  : "control-panel__button"
-              }
-              onClick={() => onFontSizeChange(option.value)}
-            >
-              {option.label}
-            </button>
+          {fontSizeOptions.map(opt => (
+            <button key={opt.id} type="button"
+              className={textStyle.fontSize === opt.value ? "control-panel__button control-panel__button--active" : "control-panel__button"}
+              onClick={() => onFontSizeChange(opt.value)}>{opt.label}</button>
           ))}
         </div>
       </div>
@@ -108,19 +80,10 @@ function ControlPanel({
       <div className="control-panel__group">
         <p className="control-panel__label">Color</p>
         <div className="control-panel__buttons">
-          {colorOptions.map((option) => (
-            <button
-              key={option.id}
-              type="button"
-              className={
-                textStyle.color === option.value
-                  ? "control-panel__button control-panel__button--active"
-                  : "control-panel__button"
-              }
-              onClick={() => onColorChange(option.value)}
-            >
-              {option.label}
-            </button>
+          {colorOptions.map(opt => (
+            <button key={opt.id} type="button"
+              className={textStyle.color === opt.value ? "control-panel__button control-panel__button--active" : "control-panel__button"}
+              onClick={() => onColorChange(opt.value)}>{opt.label}</button>
           ))}
         </div>
       </div>
@@ -128,39 +91,11 @@ function ControlPanel({
       <div className="control-panel__group">
         <p className="control-panel__label">Font Family</p>
         <div className="control-panel__buttons">
-          {fontFamilyOptions.map((option) => (
-            <button
-              key={option.id}
-              type="button"
-              className={
-                textStyle.fontFamily === option.value
-                  ? "control-panel__button control-panel__button--active"
-                  : "control-panel__button"
-              }
-              onClick={() => onFontFamilyChange(option.value)}
-            >
-              {option.label}
-            </button>
+          {fontFamilyOptions.map(opt => (
+            <button key={opt.id} type="button"
+              className={textStyle.fontFamily === opt.value ? "control-panel__button control-panel__button--active" : "control-panel__button"}
+              onClick={() => onFontFamilyChange(opt.value)}>{opt.label}</button>
           ))}
-        </div>
-      </div>
-      <div className="control-panel__group">
-        <p className="control-panel__label">File Actions</p>
-        <div className="control-panel__buttons">
-          <button 
-            type="button" 
-            className="control-panel__button" 
-            onClick={onSave}
-          >
-            Save File
-          </button>
-          <button 
-            type="button" 
-            className="control-panel__button" 
-            onClick={onOpen}
-          >
-            Open File
-          </button>
         </div>
       </div>
     </div>
