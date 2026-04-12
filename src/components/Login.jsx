@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+// Presentation-only: App owns credentials policy (register-on-first-login, etc.).
+
 function Login({ onLogin }) {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");

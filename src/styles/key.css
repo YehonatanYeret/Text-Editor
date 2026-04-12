@@ -19,6 +19,13 @@
   transform: translateY(1px);
 }
 
+.key-button--disabled,
+.key-button--disabled:hover {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .key-button--action {
   width: 100%;
   min-width: 8.7rem;

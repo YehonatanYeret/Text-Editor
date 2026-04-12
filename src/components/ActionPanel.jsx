@@ -16,9 +16,6 @@ function getEditButtons() {
   ];
 }
 
-/**
- * Maps action ids to handlers so adding a file/edit action stays a single table row.
- */
 function createActionHandlers(callbacks) {
   return {
     "new-doc": () => callbacks.onNew(),
@@ -27,6 +24,7 @@ function createActionHandlers(callbacks) {
     "delete-char": () => callbacks.onDeleteChar(),
     "delete-word": () => callbacks.onDeleteWord?.(),
     "clear-all": () => callbacks.onClearAll(),
+    undo: () => callbacks.onUndo?.(),
   };
 }
 
@@ -37,6 +35,8 @@ function ActionPanel({
   onDeleteChar,
   onDeleteWord,
   onClearAll,
+  onUndo,
+  canUndo,
 }) {
   const fileButtons = getFileButtons();
   const editButtons = getEditButtons();
@@ -47,7 +47,9 @@ function ActionPanel({
     onDeleteChar,
     onDeleteWord,
     onClearAll,
+    onUndo,
   });
+  const run = (id) => () => handlers[id]?.();
 
   return (
     <div className="action-panel">
@@ -58,9 +60,21 @@ function ActionPanel({
             key={action.id}
             label={action.label}
             variant="action"
-            onPress={() => handlers[action.id]?.()}
+            onPress={run(action.id)}
           />
         ))}
+      </div>
+
+      <p className="action-panel__label action-panel__label--secondary">
+        History
+      </p>
+      <div className="action-panel__buttons">
+        <Key
+          label="Undo"
+          variant="action"
+          onPress={run("undo")}
+          disabled={!canUndo}
+        />
       </div>
 
       <p className="action-panel__label action-panel__label--secondary">
@@ -72,7 +86,7 @@ function ActionPanel({
             key={action.id}
             label={action.label}
             variant="action"
-            onPress={() => handlers[action.id]?.()}
+            onPress={run(action.id)}
           />
         ))}
       </div>

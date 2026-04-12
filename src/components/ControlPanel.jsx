@@ -1,5 +1,7 @@
 import OptionButtonGroup from "./OptionButtonGroup.jsx";
 
+// Static option tables keep JSX declarative; values must match what App stores on each segment.
+
 function getLanguageOptions() {
   return [
     { id: "english", label: "English" },

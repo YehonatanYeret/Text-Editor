@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+// Global styles only here—components stay free of CSS imports (one place to grep).
 import "./styles/index.css";
 import "./styles/app.css";
 import "./styles/login.css";

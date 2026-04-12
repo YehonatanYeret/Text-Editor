@@ -1,9 +1,11 @@
 import DisplayArea from "../components/DisplayArea.jsx";
 import EditorArea from "../components/EditorArea.jsx";
+import {
+  highlightRangesForQuery,
+  segmentsToString,
+} from "../utils/segmentText.js";
 
-/**
- * Post-auth shell: user bar, document panes, and the keyboard region.
- */
+/** Layout only: state and handlers live in `App.jsx`. */
 function EditorPage({
   currentUser,
   onLogout,
@@ -17,6 +19,8 @@ function EditorPage({
   onDeleteChar,
   onDeleteWord,
   onClearAll,
+  onUndo,
+  canUndo,
   textStyle,
   onFontSizeChange,
   onColorChange,
@@ -24,6 +28,16 @@ function EditorPage({
   onSave,
   onOpen,
   onNew,
+  findQuery,
+  replaceQuery,
+  onFindChange,
+  onReplaceChange,
+  matchCount,
+  onReplaceAll,
+  keyboardTarget,
+  onKeyboardTargetDocument,
+  onKeyboardTargetFind,
+  onKeyboardTargetReplace,
 }) {
   return (
     <div className="app">
@@ -39,16 +53,28 @@ function EditorPage({
       </header>
 
       <div className="display-container">
-        {docs.map((doc) => (
-          <DisplayArea
-            key={doc.id}
-            content={doc.content}
-            isActive={doc.id === activeId}
-            showClose={docs.length > 1}
-            onFocus={() => onActivateDoc(doc.id)}
-            onClose={() => onCloseDoc(doc.id)}
-          />
-        ))}
+        {docs.map((doc) => {
+          const text = segmentsToString(doc.content);
+          const highlightRanges =
+            doc.id === activeId
+              ? highlightRangesForQuery(text, findQuery)
+              : [];
+
+          return (
+            <DisplayArea
+              key={doc.id}
+              content={doc.content}
+              isActive={doc.id === activeId}
+              showClose={docs.length > 1}
+              onFocus={() => {
+                onActivateDoc(doc.id);
+                onKeyboardTargetDocument();
+              }}
+              onClose={() => onCloseDoc(doc.id)}
+              highlightRanges={highlightRanges}
+            />
+          );
+        })}
       </div>
 
       <EditorArea
@@ -58,6 +84,8 @@ function EditorPage({
         onDeleteChar={onDeleteChar}
         onDeleteWord={onDeleteWord}
         onClearAll={onClearAll}
+        onUndo={onUndo}
+        canUndo={canUndo}
         textStyle={textStyle}
         onFontSizeChange={onFontSizeChange}
         onColorChange={onColorChange}
@@ -65,6 +93,15 @@ function EditorPage({
         onSave={onSave}
         onOpen={onOpen}
         onNew={onNew}
+        findQuery={findQuery}
+        replaceQuery={replaceQuery}
+        onFindChange={onFindChange}
+        onReplaceChange={onReplaceChange}
+        matchCount={matchCount}
+        onReplaceAll={onReplaceAll}
+        keyboardTarget={keyboardTarget}
+        onKeyboardTargetFind={onKeyboardTargetFind}
+        onKeyboardTargetReplace={onKeyboardTargetReplace}
       />
     </div>
   );
