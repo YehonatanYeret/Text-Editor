@@ -1,10 +1,10 @@
 import Key from "./Key.jsx";
-import "./Keyboard.css";
 
 /**
  * Builds three keyboard layouts grouped by rows for a realistic visual structure.
  */
 function getLanguageLayouts() {
+  // Keyboard layouts are defined as arrays of rows, which are arrays of characters.
   const englishRows = [
     ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
     ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")"],

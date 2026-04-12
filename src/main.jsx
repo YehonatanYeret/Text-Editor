@@ -1,7 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+// Global styles only here—components stay free of CSS imports (one place to grep).
+import "./styles/index.css";
+import "./styles/app.css";
+import "./styles/login.css";
+import "./styles/editor.css";
 import App from "./App.jsx";
-import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

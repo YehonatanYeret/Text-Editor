@@ -20,7 +20,6 @@
   gap: 0.5rem;
 }
 
-
 @media screen and (max-width: 600px) {
   .action-panel {
     grid-template-columns: repeat(4, max-content);

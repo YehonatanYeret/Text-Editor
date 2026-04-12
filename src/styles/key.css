@@ -4,19 +4,26 @@
   padding: 0.45rem 0.55rem;
   font-size: 0.95rem;
   font-weight: 600;
-  color: #c0caf5;
-  background: #2a2e42;
-  border: 1px solid #565f89;
-  border-radius: 6px;
+  color: var(--text-btn);
+  background: var(--surface-btn);
+  border: 1px solid var(--surface-btn-border);
+  border-radius: var(--radius-btn);
   cursor: pointer;
 }
 
 .key-button:hover {
-  background: #3b4261;
+  background: var(--surface-btn-hover);
 }
 
 .key-button:active {
   transform: translateY(1px);
+}
+
+.key-button--disabled,
+.key-button--disabled:hover {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .key-button--action {

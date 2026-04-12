@@ -1,0 +1,67 @@
+.find-replace {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  background: #1e2030;
+  border: 1px solid #414868;
+  border-radius: 8px;
+}
+
+.find-replace__label {
+  margin: 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #9aa5ce;
+}
+
+.find-replace__hint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #565f89;
+}
+
+.find-replace__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: center;
+}
+
+.find-replace__input {
+  flex: 1;
+  min-width: 120px;
+  padding: 0.4rem 0.55rem;
+  font-size: 0.9rem;
+  color: #e0e0e0;
+  background: #16161e;
+  border: 1px solid #565f89;
+  border-radius: 6px;
+}
+
+.find-replace__input--active {
+  border-color: #7aa2f7;
+  box-shadow: 0 0 0 1px rgba(122, 162, 247, 0.4);
+}
+
+.find-replace__meta {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #7aa2f7;
+}
+
+.find-replace__btn {
+  padding: 0.4rem 0.65rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-btn);
+  background: var(--surface-btn);
+  border: 1px solid var(--surface-btn-border);
+  border-radius: var(--radius-btn);
+  cursor: pointer;
+}
+
+.find-replace__btn:hover {
+  background: var(--surface-btn-hover);
+}

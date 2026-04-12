@@ -1,0 +1,13 @@
+.option-button-group__label {
+  margin: 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #9aa5ce;
+}
+
+.option-button-group__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}

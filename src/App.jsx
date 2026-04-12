@@ -1,248 +1,267 @@
 import { useState } from "react";
-import DisplayArea from "./components/DisplayArea.jsx";
-import EditorArea from "./components/EditorArea.jsx";
-import Login from "./components/Login.jsx";
-import "./App.css";
+import LoginPage from "./pages/LoginPage.jsx";
+import EditorPage from "./pages/EditorPage.jsx";
+import {
+  MAX_UNDO,
+  DEFAULT_TEXT_STYLE,
+  createEmptyDocument,
+} from "./constants/editor.js";
+import { deleteLastWordInString } from "./utils/stringEdit.js";
+import {
+  attemptLogin,
+  saveDocumentWithPrompt,
+  openDocumentWithPrompt,
+} from "./utils/userStorage.js";
+import { runForKeyboardTarget } from "./utils/keyboardTarget.js";
+import {
+  segmentsAfterDeletingLastWord,
+  cloneSegments,
+  replaceAllInSegments,
+  countOccurrencesInString,
+  segmentsToString,
+  segmentsEqual,
+} from "./utils/segmentText.js";
+import {
+  findActiveDoc,
+  mapActiveDocContent,
+  appendCharToActiveDoc,
+  removeLastCharFromActiveDoc,
+} from "./utils/docList.js";
+import {
+  undoMapAfterPush,
+  undoMapAfterPop,
+  undoMapWithoutDoc,
+} from "./utils/undoHelpers.js";
 
-
-/**
- * Coordinates auth, multiple document buffers, and the virtual keyboard.
- * Typed output is stored as a list of segments so each character can keep its own style snapshot.
- */
+/** Root component: holds all state and handlers; UI is split into LoginPage / EditorPage */
 function App() {
-  // Session identity; null means the editor UI is hidden until login succeeds.
+  // --- App-wide state ---
   const [currentUser, setCurrentUser] = useState(null);
-
-  // Drives which character set the Keyboard renders (English / Hebrew / emojis).
   const [language, setLanguage] = useState("english");
-
-  // Style picked in the control panel; only affects characters typed after the change.
-  const [currentStyle, setCurrentStyle] = useState({
-    fontSize: "26px",
-    color: "#e0e0e0",
-    fontFamily: "Arial, sans-serif",
+  const [currentStyle, setCurrentStyle] = useState(() => ({
+    ...DEFAULT_TEXT_STYLE,
+  }));
+  /** Open tabs: { id, content } where content is an array of { char, style } segments */
+  const [docs, setDocs] = useState(() => {
+    const first = createEmptyDocument();
+    return [first];
   });
-
-  // Each tab is { id, content } where content is an array of { char, style }.
-  const [docs, setDocs] = useState([{ id: Date.now(), content: [] }]);
-
-  // Which document receives keyboard input and file save/load targets.
   const [activeId, setActiveId] = useState(docs[0].id);
+  const [findQuery, setFindQuery] = useState("");
+  const [replaceQuery, setReplaceQuery] = useState("");
+  /** Where virtual keyboard input goes: document | find | replace */
+  const [keyboardTarget, setKeyboardTarget] = useState("document");
+  /** Per document id: stack of content snapshots for undo */
+  const [undoByDocId, setUndoByDocId] = useState({});
 
-  // Keeps rendering stable if activeId ever drifts.
+  // Derived values (not separate state)
   const activeDoc = docs.find((d) => d.id === activeId) || docs[0];
+  const activeMatchCount = countOccurrencesInString(
+    segmentsToString(activeDoc.content),
+    findQuery
+  );
+  const canUndo = (undoByDocId[activeId] || []).length > 0;
 
-  /**
-   * Patches only the focused document by id so multi-tab edits do not clobber each other.
-   */
-  const updateActiveDoc = (updateFn) => {
-    setDocs((prevDocs) =>
-      prevDocs.map((doc) =>
-        doc.id === activeId ? { ...doc, ...updateFn(doc) } : doc
+  const pushUndoSnapshot = (docId, contentSnapshot) => {
+    setUndoByDocId((u) =>
+      undoMapAfterPush(u, docId, contentSnapshot, MAX_UNDO)
+    );
+  };
+
+  // --- Keyboard routing (find / replace fields vs active document) ---
+  const appendCharacter = (char) => {
+    runForKeyboardTarget(keyboardTarget, {
+      onFind: () => setFindQuery((q) => q + char),
+      onReplace: () => setReplaceQuery((q) => q + char),
+      onDocument: () => {
+        const doc = findActiveDoc(docs, activeId);
+        if (doc) pushUndoSnapshot(activeId, doc.content);
+        setDocs((prev) =>
+          appendCharToActiveDoc(prev, activeId, char, currentStyle)
+        );
+      },
+    });
+  };
+
+  const deleteCharacter = () => {
+    runForKeyboardTarget(keyboardTarget, {
+      onFind: () => setFindQuery((q) => q.slice(0, -1)),
+      onReplace: () => setReplaceQuery((q) => q.slice(0, -1)),
+      onDocument: () => {
+        const doc = findActiveDoc(docs, activeId);
+        if (!doc || doc.content.length === 0) return;
+        pushUndoSnapshot(activeId, doc.content);
+        setDocs((prev) => removeLastCharFromActiveDoc(prev, activeId));
+      },
+    });
+  };
+
+  const deleteWord = () => {
+    runForKeyboardTarget(keyboardTarget, {
+      onFind: () => setFindQuery((q) => deleteLastWordInString(q)),
+      onReplace: () => setReplaceQuery((q) => deleteLastWordInString(q)),
+      onDocument: () => {
+        const doc = findActiveDoc(docs, activeId);
+        if (!doc) return;
+        const next = segmentsAfterDeletingLastWord(doc.content);
+        if (next.length === doc.content.length) return;
+        pushUndoSnapshot(activeId, doc.content);
+        setDocs((prev) => mapActiveDocContent(prev, activeId, next));
+      },
+    });
+  };
+
+  const clearAllText = () => {
+    runForKeyboardTarget(keyboardTarget, {
+      onFind: () => setFindQuery(""),
+      onReplace: () => setReplaceQuery(""),
+      onDocument: () => {
+        const doc = findActiveDoc(docs, activeId);
+        if (!doc || doc.content.length === 0) return;
+        pushUndoSnapshot(activeId, doc.content);
+        setDocs((prev) => mapActiveDocContent(prev, activeId, []));
+      },
+    });
+  };
+
+  const undo = () => {
+    const popped = undoMapAfterPop(undoByDocId, activeId);
+    if (!popped) return;
+    setUndoByDocId(popped.undoByDocId);
+    setDocs((prev) =>
+      mapActiveDocContent(
+        prev,
+        activeId,
+        cloneSegments(popped.restored)
       )
     );
   };
 
-  /**
-   * Pushes one segment: the character plus a copy of currentStyle so later panel changes do not rewrite history.
-   */
-  const appendCharacter = (char) => {
-    updateActiveDoc((doc) => ({
-      content: [...doc.content, { char, style: { ...currentStyle } }],
-    }));
+  const replaceAllMatches = () => {
+    if (!findQuery) return;
+    const doc = findActiveDoc(docs, activeId);
+    if (!doc) return;
+
+    const next = replaceAllInSegments(
+      doc.content,
+      findQuery,
+      replaceQuery,
+      currentStyle
+    );
+    if (segmentsEqual(next, doc.content)) return;
+
+    pushUndoSnapshot(activeId, doc.content);
+    setDocs((prev) => mapActiveDocContent(prev, activeId, next));
   };
 
-  /** Drops the last segment */
-  const deleteCharacter = () => {
-    updateActiveDoc((doc) => ({
-      content: doc.content.slice(0, -1),
-    }));
+  // --- Files & tabs (localStorage keys scoped by username) ---
+  const saveFile = () => {
+    saveDocumentWithPrompt(currentUser, activeDoc.content);
   };
 
-  /** Deletes the last word in the active document while preserving per-character styles on what remains. */
-  const deleteWord = () => {
-    updateActiveDoc((doc) => ({
-      content: segmentsAfterDeletingLastWord(doc.content),
-    }));
-  };
-
-  /**
- * Removes the last “word” as a suffix of segments: skips trailing whitespace, then drops
- * the final run of non-whitespace characters (works for English, Hebrew, and emoji keys).
- */
-function segmentsAfterDeletingLastWord(segments) {
-  if (!segments.length) return segments;
-
-  let end = segments.length - 1;
-  while (end >= 0 && /\s/u.test(segments[end].char)) {
-    end -= 1;
-  }
-  if (end < 0) return [];
-
-  // Now end is on the last non-whitespace char; keep moving left until we find whitespace or the start.
-  let start = end;
-  while (start >= 0 && !/\s/u.test(segments[start].char)) {
-    start -= 1;
-  }
-  return segments.slice(0, start + 1);
-}
-
-  /** Wipes the active document’s segments without touching other tabs. */
-  const clearAllText = () => updateActiveDoc(() => ({ content: [] }));
-
-  const changeFontSize = (fontSize) =>
-    setCurrentStyle((prev) => ({ ...prev, fontSize }));
-  const changeTextColor = (color) =>
-    setCurrentStyle((prev) => ({ ...prev, color }));            
-  const changeFontFamily = (fontFamily) =>
-    setCurrentStyle((prev) => ({ ...prev, fontFamily }));
-
-  /** Opens a fresh empty buffer and focuses it so typing does not append to an old tab. */
   const createNewDoc = () => {
-    const newDoc = { id: Date.now(), content: [] };
-    setDocs([...docs, newDoc]);
+    const newDoc = createEmptyDocument();
+    setDocs((prev) => [...prev, newDoc]);
     setActiveId(newDoc.id);
+    setKeyboardTarget("document");
   };
 
   const closeDoc = (id) => {
     if (docs.length === 1) return;
 
-    if (docs.find((doc) => doc.id === id).content.length > 0) { // ask only if there is content to lose in the closing tab
+    const closing = docs.find((doc) => doc.id === id);
+    if (closing?.content.length > 0) {
       if (window.confirm("You want to save before closing?")) {
         saveFile();
       }
-    } 
+    }
     const newDocs = docs.filter((doc) => doc.id !== id);
     setDocs(newDocs);
     if (activeId === id) setActiveId(newDocs[0].id);
+    setUndoByDocId((u) => undoMapWithoutDoc(u, id));
   };
 
-  /**
-   * Persists the active document’s segment list under a user-scoped key so accounts do not collide in localStorage.
-   */
-  const saveFile = () => {
-    const userFiles = Object.keys(localStorage)
-      .filter((key) => key.startsWith(`${currentUser}:`))
-      .map((key) => key.split(":")[1]);
-    
-    console.log("User files:", userFiles);
-
-    let message;
-    if (userFiles.length === 0){
-      message = `You don't have any saved files yet.\nEnter a name to save:`;
-    }
-    else{
-      message = `Your files: ${userFiles.join(", ")}\nEnter a name to save:`;
-    }
-
-    const name = prompt(message);
-    if (!name) return;
-    if (userFiles.includes(name)) {
-      if (!window.confirm("A file with that name already exists. Overwrite?")) {
-        return;
-      }
-    }
-    const storageKey = `${currentUser}:${name}`;
-    localStorage.setItem(storageKey, JSON.stringify(activeDoc.content));
-    alert(`File "${name}" saved to your account.`);
-  };
-
-  /**
-   * Lists keys prefixed with the logged-in user, then hydrates a new tab from the chosen payload.
-   */
   const openFile = () => {
-    const userFiles = Object.keys(localStorage)
-      .filter((key) => key.startsWith(`${currentUser}:`))
-      .map((key) => key.split(":")[1]);
-
-    if (userFiles.length === 0)
-      return alert("You don't have any saved files yet.");
-
-    const name = prompt(`Your files: ${userFiles.join(", ")}\nWhich one to open?`);
-    const saved = localStorage.getItem(`${currentUser}:${name}`);
-
-    if (!saved) return;
-
-    const newDoc = { id: Date.now(), content: JSON.parse(saved) };
-    setDocs([...docs, newDoc]);
+    const content = openDocumentWithPrompt(currentUser);
+    if (!content) return;
+    const newDoc = { id: Date.now(), content };
+    setDocs((prev) => [...prev, newDoc]);
     setActiveId(newDoc.id);
+    setKeyboardTarget("document");
   };
 
-  /** Ends the session and resets to a single empty doc so the next login starts clean. */
   const handleLogout = () => {
-    if (window.confirm("Are you sure you want to logout? (Unsaved work will be lost)")) {
+    if (
+      window.confirm(
+        "Are you sure you want to logout? (Unsaved work will be lost)"
+      )
+    ) {
+      const fresh = createEmptyDocument();
       setCurrentUser(null);
-      setDocs([{ id: Date.now(), content: [] }]);
+      setDocs([fresh]);
+      setActiveId(fresh.id);
+      setUndoByDocId({});
+      setFindQuery("");
+      setReplaceQuery("");
+      setKeyboardTarget("document");
     }
   };
 
+  // --- Auth ---
   const handleLogin = (username, password) => {
-    const user = localStorage.getItem(`user:${username}`);
-    if (!user) {
-      // If the user doesn't exist, create a new account with the provided password
-      localStorage.setItem(`user:${username}`, JSON.stringify({ password }));
+    const result = attemptLogin(username, password);
+    if (result.ok) {
       setCurrentUser(username);
     } else {
-      if (JSON.parse(user).password === password) {
-        setCurrentUser(username);
-      } else {
-        alert("Invalid username or password.");
-      }
+      window.alert("Invalid username or password.");
     }
   };
 
-  // Entire editor tree is unreachable until a username is chosen (Login owns that flow).
   if (!currentUser) {
-    return (
-      <div className="app">
-        <Login onLogin={handleLogin} />
-      </div>
-    );
+    return <LoginPage onLogin={handleLogin} />;
   }
 
+  /* EditorPage is presentational: editor logic stays here in App */
   return (
-    <div className="app">
-      <header className="user-header">
-        <div className="user-info">
-          <span>
-            Connected as: <strong>{currentUser}</strong>
-          </span>
-        </div>
-        <button className="logout-btn" onClick={handleLogout}>
-          Logout
-        </button>
-      </header>
-
-      {/* One DisplayArea per doc; clicking a pane sets activeId so the keyboard targets that buffer. */}
-      <div className="display-container">
-        {docs.map((doc) => (
-          <DisplayArea
-            key={doc.id}
-            content={doc.content}
-            isActive={doc.id === activeId}
-            showClose={docs.length > 1}
-            onFocus={() => setActiveId(doc.id)}
-            onClose={() => closeDoc(doc.id)}
-          />
-        ))}
-      </div>
-
-      <EditorArea
-        language={language}
-        onLanguageChange={setLanguage}
-        onKeyPress={appendCharacter}
-        onDeleteChar={deleteCharacter}
-        onDeleteWord={deleteWord}
-        onClearAll={clearAllText}
-        textStyle={currentStyle}
-        onFontSizeChange={changeFontSize}
-        onColorChange={changeTextColor}
-        onFontFamilyChange={changeFontFamily}
-        onSave={saveFile}
-        onOpen={openFile}
-        onNew={createNewDoc}
-      />
-    </div>
+    <EditorPage
+      currentUser={currentUser}
+      onLogout={handleLogout}
+      docs={docs}
+      activeId={activeId}
+      onActivateDoc={setActiveId}
+      onCloseDoc={closeDoc}
+      language={language}
+      onLanguageChange={setLanguage}
+      onKeyPress={appendCharacter}
+      onDeleteChar={deleteCharacter}
+      onDeleteWord={deleteWord}
+      onClearAll={clearAllText}
+      onUndo={undo}
+      canUndo={canUndo}
+      textStyle={currentStyle}
+      onFontSizeChange={(fontSize) =>
+        setCurrentStyle((prev) => ({ ...prev, fontSize }))
+      }
+      onColorChange={(color) =>
+        setCurrentStyle((prev) => ({ ...prev, color }))
+      }
+      onFontFamilyChange={(fontFamily) =>
+        setCurrentStyle((prev) => ({ ...prev, fontFamily }))
+      }
+      onSave={saveFile}
+      onOpen={openFile}
+      onNew={createNewDoc}
+      findQuery={findQuery}
+      replaceQuery={replaceQuery}
+      onFindChange={setFindQuery}
+      onReplaceChange={setReplaceQuery}
+      matchCount={activeMatchCount}
+      onReplaceAll={replaceAllMatches}
+      keyboardTarget={keyboardTarget}
+      onKeyboardTargetDocument={() => setKeyboardTarget("document")}
+      onKeyboardTargetFind={() => setKeyboardTarget("find")}
+      onKeyboardTargetReplace={() => setKeyboardTarget("replace")}
+    />
   );
 }
 

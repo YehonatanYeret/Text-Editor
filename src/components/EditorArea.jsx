@@ -1,7 +1,7 @@
 import Keyboard from "./Keyboard.jsx";
 import ControlPanel from "./ControlPanel.jsx";
 import ActionPanel from "./ActionPanel.jsx";
-import "./EditorArea.css";
+import FindReplacePanel from "./FindReplacePanel.jsx";
 
 function EditorArea({
   language,
@@ -10,17 +10,41 @@ function EditorArea({
   onDeleteChar,
   onDeleteWord,
   onClearAll,
+  onUndo,
+  canUndo,
   textStyle,
   onFontSizeChange,
   onColorChange,
   onFontFamilyChange,
   onNew,
   onSave,
-  onOpen
+  onOpen,
+  findQuery,
+  replaceQuery,
+  onFindChange,
+  onReplaceChange,
+  matchCount,
+  onReplaceAll,
+  keyboardTarget,
+  onKeyboardTargetFind,
+  onKeyboardTargetReplace,
 }) {
   return (
     <section className="editor-area" aria-label="Virtual keyboard editor">
       <h2 className="editor-area__title">Editor Controls</h2>
+
+      <FindReplacePanel
+        findQuery={findQuery}
+        replaceQuery={replaceQuery}
+        onFindChange={onFindChange}
+        onReplaceChange={onReplaceChange}
+        matchCount={matchCount}
+        onReplaceAll={onReplaceAll}
+        keyboardTarget={keyboardTarget}
+        onKeyboardTargetFind={onKeyboardTargetFind}
+        onKeyboardTargetReplace={onKeyboardTargetReplace}
+      />
+
       <div className="editor-area__controls">
         <div className="editor-area__left-panel">
           <ActionPanel
@@ -30,6 +54,8 @@ function EditorArea({
             onDeleteChar={onDeleteChar}
             onDeleteWord={onDeleteWord}
             onClearAll={onClearAll}
+            onUndo={onUndo}
+            canUndo={canUndo}
           />
         </div>
         <div className="editor-area__keyboard-panel">
