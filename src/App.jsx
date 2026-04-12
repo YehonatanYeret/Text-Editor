@@ -93,7 +93,7 @@ function segmentsAfterDeletingLastWord(segments) {
   const changeFontSize = (fontSize) =>
     setCurrentStyle((prev) => ({ ...prev, fontSize }));
   const changeTextColor = (color) =>
-    setCurrentStyle((prev) => ({ ...prev, color }));
+    setCurrentStyle((prev) => ({ ...prev, color }));            
   const changeFontFamily = (fontFamily) =>
     setCurrentStyle((prev) => ({ ...prev, fontFamily }));
 
