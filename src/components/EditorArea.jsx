@@ -18,6 +18,7 @@ function EditorArea({
   onSave,
   onOpen
 }) {
+  // Combines the three main editor controls: the keyboard, the text styling panel, and the file/edit action panel.
   return (
     <section className="editor-area" aria-label="Virtual keyboard editor">
       <h2 className="editor-area__title">Editor Controls</h2>

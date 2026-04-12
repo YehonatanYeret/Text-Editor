@@ -15,7 +15,7 @@ function DisplayArea({ content, isActive, showClose, onFocus, onClose }) {
             className="display-area__close-btn" 
             onClick={(e) => {
               e.stopPropagation();
-              onClose();
+              onClose(); // coming from App.jsx, this will remove the doc from state and thus unmount this component
             }}
           >
             ×
@@ -23,6 +23,7 @@ function DisplayArea({ content, isActive, showClose, onFocus, onClose }) {
         )}
       </div>
       
+      {/* Display content is rendered as styled segments; empty state shows a placeholder. */}
       <div className="display-area__content">
         {content.map((item, index) => (
           <span key={index} style={item.style}>

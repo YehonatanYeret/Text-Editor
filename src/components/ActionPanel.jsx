@@ -74,6 +74,7 @@ function ActionPanel({
 
   return (
     <div className="action-panel">
+      {/*Action panel*/}
       <p className="action-panel__label">Files</p>
       <div className="action-panel__buttons">
         {fileButtons.map((action) => (
@@ -85,10 +86,9 @@ function ActionPanel({
           />
         ))}
       </div>
-
-      <p className="action-panel__label action-panel__label--secondary">
-        Edit
-      </p>
+      
+      {/*Edit panel*/}
+      <p className="action-panel__label action-panel__label--secondary">Edit</p>
       <div className="action-panel__buttons">
         {editButtons.map((action) => (
           <Key

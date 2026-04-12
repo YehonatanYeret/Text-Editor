@@ -33,7 +33,7 @@ function Login({ onLogin }) {
             onChange={(e) => setPassword(e.target.value)}
           />
           <button type="submit" className="login-btn">
-            Sign In (or create account)
+            Sign In (or create account) {/* Depend on whether the user has an existing account */}
           </button>
         </form>
       </div>
