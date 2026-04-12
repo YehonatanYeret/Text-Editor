@@ -1,4 +1,4 @@
-import "./ControlPanel.css";
+import OptionButtonGroup from "./OptionButtonGroup.jsx";
 
 function getLanguageOptions() {
   return [
@@ -49,50 +49,34 @@ function ControlPanel({
   return (
     <div className="control-panel">
       <p className="control-panel__title">Settings</p>
-      
-      <div className="control-panel__group">
-        <p className="control-panel__label">Language</p>
-        <div className="control-panel__buttons">
-          {languageOptions.map(opt => (
-            <button key={opt.id} type="button" 
-              className={language === opt.id ? "control-panel__button control-panel__button--active" : "control-panel__button"}
-              onClick={() => onLanguageChange(opt.id)}>{opt.label}</button>
-          ))}
-        </div>
-      </div>
 
-      <div className="control-panel__group">
-        <p className="control-panel__label">Font Size</p>
-        <div className="control-panel__buttons">
-          {fontSizeOptions.map(opt => (
-            <button key={opt.id} type="button"
-              className={textStyle.fontSize === opt.value ? "control-panel__button control-panel__button--active" : "control-panel__button"}
-              onClick={() => onFontSizeChange(opt.value)}>{opt.label}</button>
-          ))}
-        </div>
-      </div>
+      <OptionButtonGroup
+        label="Language"
+        options={languageOptions}
+        isSelected={(opt) => language === opt.id}
+        onSelect={(opt) => onLanguageChange(opt.id)}
+      />
 
-      <div className="control-panel__group">
-        <p className="control-panel__label">Color</p>
-        <div className="control-panel__buttons">
-          {colorOptions.map(opt => (
-            <button key={opt.id} type="button"
-              className={textStyle.color === opt.value ? "control-panel__button control-panel__button--active" : "control-panel__button"}
-              onClick={() => onColorChange(opt.value)}>{opt.label}</button>
-          ))}
-        </div>
-      </div>
+      <OptionButtonGroup
+        label="Font Size"
+        options={fontSizeOptions}
+        isSelected={(opt) => textStyle.fontSize === opt.value}
+        onSelect={(opt) => onFontSizeChange(opt.value)}
+      />
 
-      <div className="control-panel__group">
-        <p className="control-panel__label">Font Family</p>
-        <div className="control-panel__buttons">
-          {fontFamilyOptions.map(opt => (
-            <button key={opt.id} type="button"
-              className={textStyle.fontFamily === opt.value ? "control-panel__button control-panel__button--active" : "control-panel__button"}
-              onClick={() => onFontFamilyChange(opt.value)}>{opt.label}</button>
-          ))}
-        </div>
-      </div>
+      <OptionButtonGroup
+        label="Color"
+        options={colorOptions}
+        isSelected={(opt) => textStyle.color === opt.value}
+        onSelect={(opt) => onColorChange(opt.value)}
+      />
+
+      <OptionButtonGroup
+        label="Font Family"
+        options={fontFamilyOptions}
+        isSelected={(opt) => textStyle.fontFamily === opt.value}
+        onSelect={(opt) => onFontFamilyChange(opt.value)}
+      />
     </div>
   );
 }

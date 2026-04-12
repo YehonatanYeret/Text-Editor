@@ -33,19 +33,19 @@
 .control-panel__button {
   padding: 0.4rem 0.65rem;
   font-size: 0.86rem;
-  color: #c0caf5;
-  background: #2a2e42;
-  border: 1px solid #565f89;
-  border-radius: 6px;
+  color: var(--text-btn);
+  background: var(--surface-btn);
+  border: 1px solid var(--surface-btn-border);
+  border-radius: var(--radius-btn);
   cursor: pointer;
 }
 
 .control-panel__button:hover {
-  background: #3b4261;
+  background: var(--surface-btn-hover);
 }
 
 .control-panel__button--active {
-  color: #1a1b26;
-  background: #7aa2f7;
-  border-color: #7aa2f7;
+  color: var(--accent-active-text);
+  background: var(--accent-active-bg);
+  border-color: var(--accent-active-bg);
 }

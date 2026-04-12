@@ -12,7 +12,7 @@
 }
 
 .display-area--active {
-  border-color: #7aa2f7; 
+  border-color: #7aa2f7;
   background: #292e42;
   box-shadow: 0 0 12px rgba(122, 162, 247, 0.2);
 }
@@ -24,6 +24,15 @@
   margin-bottom: 0.75rem;
   border-bottom: 1px solid #414868;
   padding-bottom: 0.4rem;
+}
+
+.display-area__title {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #7aa2f7;
 }
 
 .display-area__close-btn {

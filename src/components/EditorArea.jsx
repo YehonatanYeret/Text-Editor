@@ -1,7 +1,6 @@
 import Keyboard from "./Keyboard.jsx";
 import ControlPanel from "./ControlPanel.jsx";
 import ActionPanel from "./ActionPanel.jsx";
-import "./EditorArea.css";
 
 function EditorArea({
   language,

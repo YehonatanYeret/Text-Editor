@@ -1,5 +1,3 @@
-import "./DisplayArea.css";
-
 function DisplayArea({ content, isActive, showClose, onFocus, onClose }) {
   return (
     <section 

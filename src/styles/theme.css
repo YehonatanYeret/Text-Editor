@@ -1,0 +1,10 @@
+/* Shared tokens for keyboard keys and settings chips (ControlPanel / Key). */
+:root {
+  --surface-btn: #2a2e42;
+  --surface-btn-border: #565f89;
+  --text-btn: #c0caf5;
+  --surface-btn-hover: #3b4261;
+  --radius-btn: 6px;
+  --accent-active-bg: #7aa2f7;
+  --accent-active-text: #1a1b26;
+}

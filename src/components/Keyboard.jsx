@@ -1,5 +1,4 @@
 import Key from "./Key.jsx";
-import "./Keyboard.css";
 
 /**
  * Builds three keyboard layouts grouped by rows for a realistic visual structure.

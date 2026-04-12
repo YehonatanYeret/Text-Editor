@@ -1,5 +1,3 @@
-import "./Key.css";
-
 /**
  * Renders one reusable keyboard-style button with optional visual variants.
  */
