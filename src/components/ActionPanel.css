@@ -11,7 +11,19 @@
   color: #9aa5ce;
 }
 
+.action-panel__label--secondary {
+  margin-top: 0.75rem;
+}
+
 .action-panel__buttons {
   display: grid;
   gap: 0.5rem;
+}
+
+
+@media screen and (max-width: 600px) {
+  .action-panel {
+    grid-template-columns: repeat(4, max-content);
+    justify-content: center;
+  }
 }

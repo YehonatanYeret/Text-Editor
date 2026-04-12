@@ -34,8 +34,12 @@ function getFontFamilyOptions() {
 }
 
 function ControlPanel({
-  language, onLanguageChange, textStyle, onFontSizeChange,
-  onColorChange, onFontFamilyChange, onNew, onSave, onOpen
+  language,
+  onLanguageChange,
+  textStyle,
+  onFontSizeChange,
+  onColorChange,
+  onFontFamilyChange,
 }) {
   const languageOptions = getLanguageOptions();
   const fontSizeOptions = getFontSizeOptions();
@@ -54,15 +58,6 @@ function ControlPanel({
               className={language === opt.id ? "control-panel__button control-panel__button--active" : "control-panel__button"}
               onClick={() => onLanguageChange(opt.id)}>{opt.label}</button>
           ))}
-        </div>
-      </div>
-
-      <div className="control-panel__group">
-        <p className="control-panel__label">File Actions</p>
-        <div className="control-panel__buttons">
-          <button type="button" className="control-panel__button" onClick={onNew}>+ New</button>
-          <button type="button" className="control-panel__button" onClick={onSave}>Save</button>
-          <button type="button" className="control-panel__button" onClick={onOpen}>Open</button>
         </div>
       </div>
 

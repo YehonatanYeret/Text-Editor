@@ -1,13 +1,14 @@
 import { useState } from "react";
-import "./Login.css"; // ניצור לו גם עיצוב משלו
+import "./Login.css";
 
 function Login({ onLogin }) {
   const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // מונע מהדף להתרענן בלחיצה על Enter
+    e.preventDefault(); 
     if (name.trim()) {
-      onLogin(name.trim());
+      onLogin(name.trim(), password);
     }
   };
 
@@ -25,8 +26,14 @@ function Login({ onLogin }) {
             onChange={(e) => setName(e.target.value)} 
             autoFocus
           />
+          <input 
+            type="text" 
+            placeholder="Password..." 
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
           <button type="submit" className="login-btn">
-            Sign In
+            Sign In (or create account)
           </button>
         </form>
       </div>

@@ -24,6 +24,9 @@ function EditorArea({
       <div className="editor-area__controls">
         <div className="editor-area__left-panel">
           <ActionPanel
+            onNew={onNew}
+            onSave={onSave}
+            onOpen={onOpen}
             onDeleteChar={onDeleteChar}
             onDeleteWord={onDeleteWord}
             onClearAll={onClearAll}
@@ -40,9 +43,6 @@ function EditorArea({
             onFontSizeChange={onFontSizeChange}
             onColorChange={onColorChange}
             onFontFamilyChange={onFontFamilyChange}
-            onNew={onNew}
-            onSave={onSave}
-            onOpen={onOpen}
           />
         </div>
       </div>
