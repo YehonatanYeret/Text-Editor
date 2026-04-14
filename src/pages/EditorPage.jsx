@@ -51,10 +51,7 @@ function EditorPage({
       </header>
 
       <div className="display-container">
-        // for every doc:
-        // if it's the active doc, we calculate the highlight ranges for the find query, 
-        // and we return the places with the word in the find query.
-        //if not active, we return empty array for highlight ranges, so no highlights.
+        
         {docs.map((doc) => {
           const text = segmentsToString(doc.content);
           const highlightRanges =
