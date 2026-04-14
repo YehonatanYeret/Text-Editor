@@ -4,10 +4,13 @@ function userRecordKey(username) {
   return `${USER_RECORD_PREFIX}${username}`;
 }
 
+// return the key use to save file in localStorage as: "john:myFile"
 function savedFileStorageKey(username, fileName) {
-  return `${username}:${fileName}`;
+  return `${username}:${fileName}`; 
 }
 
+// return all the file names the user has already saved by
+//  looking in localStorage for keys that start with "username:"
 function listSavedFileNames(username) {
   const prefix = `${username}:`;
   return Object.keys(localStorage)
@@ -15,6 +18,8 @@ function listSavedFileNames(username) {
     .map((key) => key.slice(prefix.length));
 }
 
+// if the user is new we save his password and return true, 
+// if he is not new we check the password and return true if it match and false if it doesn't
 function attemptLogin(username, password) {
   const key = userRecordKey(username);
   const stored = localStorage.getItem(key);
@@ -30,8 +35,9 @@ function attemptLogin(username, password) {
   return { ok: false };
 }
 
+// ask the user for a file name and save the document under that name,
+// if the name already exists ask if he want to overwrite it
 function saveDocumentWithPrompt(username, documentContent) {
-
   const names = listSavedFileNames(username); //get all the files the user has already saved from localStroage
   const message =
     names.length === 0
@@ -46,7 +52,7 @@ function saveDocumentWithPrompt(username, documentContent) {
       return;
     }
   }
-
+  
   localStorage.setItem(
     savedFileStorageKey(username, name),  //saved as "username:filename" in LocalStorage as the KEY
     JSON.stringify(documentContent) //the text we want to save as the VALUE

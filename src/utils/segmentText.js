@@ -4,32 +4,39 @@
 function segmentsAfterDeletingLastWord(segments) {
   if (!segments.length) return segments;
 
+  //remove the whitespace at the end
   let end = segments.length - 1;
   while (end >= 0 && /\s/u.test(segments[end].char)) {
     end -= 1;
   }
   if (end < 0) return [];
 
+  // go until the start of the last word
   let start = end;
   while (start >= 0 && !/\s/u.test(segments[start].char)) {
     start -= 1;
   }
+  // remove the last word and the whitespace before it, if any and return the rest
   return segments.slice(0, start + 1);
 }
 
+// Joins segments into a string  | ({char:a,char:b} -> "ab") 
 function segmentsToString(segments) {
   return segments.map((s) => s.char).join("");
 }
+
 
 function cloneSegments(segments) {
   return JSON.parse(JSON.stringify(segments));
 }
 
+
 function segmentsEqual(a, b) {
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
-/** Non-overlapping left-to-right scan (same rule as replace). */
+
+//COUNT how many times does "query" appear in "text"? Non-overlapping
 function countOccurrencesInString(text, query) {
   if (!query) return 0;
   let n = 0;
@@ -45,7 +52,7 @@ function countOccurrencesInString(text, query) {
   return n;
 }
 
-/** [start, end) string indices for highlighting the active document. */
+// Returns [[start,end],...] for each match of query in text. Non-overlapping, in order.
 function highlightRangesForQuery(text, query) {
   if (!query) return [];
   const ranges = [];
@@ -61,19 +68,22 @@ function highlightRangesForQuery(text, query) {
   return ranges;
 }
 
+// Gets ranges of query and checks if the segment overlaps with any of them.
 function segmentOverlapsHighlightRanges(segStart, segEnd, ranges) {
   return ranges.some(([a, b]) => segEnd > a && segStart < b);
 }
 
 /**
- * Walks segments in lockstep with split pieces so emoji / multi-code-unit keys stay aligned.
- * Inserted characters copy the style of the first segment inside each match (fallback if empty).
+ * target of this method: 
+ * - find all occurrences of "findStr" in "segments" and replace them with "replaceStr", 
  */
 function replaceAllInSegments(segments, findStr, replaceStr, fallbackStyle) {
-  if (!findStr) return segments;
+  if (!findStr) return segments; // nothing to find
   const full = segmentsToString(segments);
-  if (!full.includes(findStr)) return segments;
+  if (!full.includes(findStr)) return segments; // we didn't found the string in "segments"
 
+   // split the full string into chunks that are separated by "findStr".
+   // For example, if full = "abcdeabc" and findStr = "bc", then chunks = ["a", "de", "a", ""]
   const chunks = full.split(findStr);
   const out = [];
   let segCursor = 0;

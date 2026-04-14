@@ -7,6 +7,7 @@ import { useState } from "react";
 export default function useKeyboardTarget() {
   const [keyboardTarget, setKeyboardTarget] = useState("document");
 
+  // this functions are used as 'onFocus' in FindReplacePanel to change the target to the right one.
   const setTargetDocument = () => setKeyboardTarget("document");
   const setTargetFind = () => setKeyboardTarget("find");
   const setTargetReplace = () => setKeyboardTarget("replace");

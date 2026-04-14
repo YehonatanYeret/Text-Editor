@@ -9,6 +9,7 @@ const { attemptLogin } = userStorage;
 export default function useAuth() {
   const [currentUser, setCurrentUser] = useState(null);
 
+  //checks the username and password, and if they are correct, it sets the current user to the username.
   const handleLogin = (username, password) => {
     const result = attemptLogin(username, password);
     if (result.ok) {
