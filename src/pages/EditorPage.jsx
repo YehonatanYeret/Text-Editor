@@ -1,9 +1,7 @@
 import DisplayArea from "../components/DisplayArea.jsx";
 import EditorArea from "../components/EditorArea.jsx";
-import {
-  highlightRangesForQuery,
-  segmentsToString,
-} from "../utils/segmentText.js";
+import segmentText from "../utils/segmentText.js";
+const { highlightRangesForQuery, segmentsToString } = segmentText;
 
 /** Layout only: state and handlers live in `App.jsx`. */
 function EditorPage({

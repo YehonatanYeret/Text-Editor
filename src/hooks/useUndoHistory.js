@@ -1,23 +1,21 @@
 import { useState } from "react";
-import { MAX_UNDO } from "../constants/editor.js";
-import {
-  undoMapAfterPush,
-  undoMapAfterPop,
-  undoMapWithoutDoc,
-} from "../utils/undoHelpers.js";
-import { cloneSegments } from "../utils/segmentText.js";
+import editor from "../constants/editor.js";
+const { MAX_UNDO } = editor;
+import undoHelpers from "../utils/undoHelpers.js";
+const { undoMapAfterPush, undoMapAfterPop, undoMapWithoutDoc } = undoHelpers;
+import segmentText from "../utils/segmentText.js";
+const { cloneSegments } = segmentText;
 
 /**
  * Manages per-document undo stacks.
- *
- * @param {number} activeId - The currently-active document id (used by canUndo / popUndo).
  */
-export function useUndoHistory(activeId) {
+export default function useUndoHistory(activeId) {
   const [undoByDocId, setUndoByDocId] = useState({});
 
-  const canUndo = (undoByDocId[activeId] || []).length > 0;
+  const canUndo = (undoByDocId[activeId] || []).length > 0; //if there is a stack for the doc to undo from him
 
-  /** Push a content snapshot onto the undo stack for `docId`. */
+  // this function happans everytime we delete or adding somthing!
+  //  it adds to the stack and in this way we can undo it later.
   const pushUndoSnapshot = (docId, contentSnapshot) => {
     setUndoByDocId((u) =>
       undoMapAfterPush(u, docId, contentSnapshot, MAX_UNDO)

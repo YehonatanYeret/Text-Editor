@@ -1,21 +1,21 @@
 const USER_RECORD_PREFIX = "user:";
 
-export function userRecordKey(username) {
+function userRecordKey(username) {
   return `${USER_RECORD_PREFIX}${username}`;
 }
 
-export function savedFileStorageKey(username, fileName) {
+function savedFileStorageKey(username, fileName) {
   return `${username}:${fileName}`;
 }
 
-export function listSavedFileNames(username) {
+function listSavedFileNames(username) {
   const prefix = `${username}:`;
   return Object.keys(localStorage)
     .filter((key) => key.startsWith(prefix))
     .map((key) => key.slice(prefix.length));
 }
 
-export function attemptLogin(username, password) {
+function attemptLogin(username, password) {
   const key = userRecordKey(username);
   const stored = localStorage.getItem(key);
   if (!stored) {
@@ -30,8 +30,9 @@ export function attemptLogin(username, password) {
   return { ok: false };
 }
 
-export function saveDocumentWithPrompt(username, documentContent) {
-  const names = listSavedFileNames(username);
+function saveDocumentWithPrompt(username, documentContent) {
+
+  const names = listSavedFileNames(username); //get all the files the user has already saved from localStroage
   const message =
     names.length === 0
       ? `You don't have any saved files yet.\nEnter a name to save:`
@@ -47,14 +48,14 @@ export function saveDocumentWithPrompt(username, documentContent) {
   }
 
   localStorage.setItem(
-    savedFileStorageKey(username, name),
-    JSON.stringify(documentContent)
+    savedFileStorageKey(username, name),  //saved as "username:filename" in LocalStorage as the KEY
+    JSON.stringify(documentContent) //the text we want to save as the VALUE
   );
   window.alert(`File "${name}" saved to your account.`);
 }
 
-export function openDocumentWithPrompt(username) {
-  const names = listSavedFileNames(username);
+function openDocumentWithPrompt(username) {
+  const names = listSavedFileNames(username); //get all the files the user has already saved from localStroage
   if (names.length === 0) {
     window.alert("You don't have any saved files yet.");
     return null;
@@ -65,7 +66,7 @@ export function openDocumentWithPrompt(username) {
   );
   if (name == null || name === "") return null;
 
-  const raw = localStorage.getItem(savedFileStorageKey(username, name));
+  const raw = localStorage.getItem(savedFileStorageKey(username, name)); //the VALUE - the TEXT we saved under "username:filename" 
   if (!raw) return null;
 
   try {
@@ -74,3 +75,12 @@ export function openDocumentWithPrompt(username) {
     return null;
   }
 }
+
+export default {
+  userRecordKey,
+  savedFileStorageKey,
+  listSavedFileNames,
+  attemptLogin,
+  saveDocumentWithPrompt,
+  openDocumentWithPrompt,
+};

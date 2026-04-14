@@ -1,6 +1,7 @@
-import { cloneSegments } from "./segmentText.js";
+import segmentText from "./segmentText.js";
+const { cloneSegments } = segmentText;
 
-export function undoMapAfterPush(undoByDocId, docId, contentSnapshot, maxUndo) {
+function undoMapAfterPush(undoByDocId, docId, contentSnapshot, maxUndo) {
   const stack = [
     ...(undoByDocId[docId] || []),
     cloneSegments(contentSnapshot),
@@ -8,7 +9,7 @@ export function undoMapAfterPush(undoByDocId, docId, contentSnapshot, maxUndo) {
   return { ...undoByDocId, [docId]: stack };
 }
 
-export function undoMapAfterPop(undoByDocId, docId) {
+function undoMapAfterPop(undoByDocId, docId) {
   const stack = undoByDocId[docId] || [];
   if (stack.length === 0) return null;
   const restored = stack[stack.length - 1];
@@ -18,7 +19,13 @@ export function undoMapAfterPop(undoByDocId, docId) {
   };
 }
 
-export function undoMapWithoutDoc(undoByDocId, docId) {
+function undoMapWithoutDoc(undoByDocId, docId) {
   const { [docId]: _removed, ...rest } = undoByDocId;
   return rest;
 }
+
+export default {
+  undoMapAfterPush,
+  undoMapAfterPop,
+  undoMapWithoutDoc,
+};

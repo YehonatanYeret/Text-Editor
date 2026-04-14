@@ -1,4 +1,4 @@
-export function runForKeyboardTarget(target, { onFind, onReplace, onDocument }) {
+function runForKeyboardTarget(target, { onFind, onReplace, onDocument }) {
   if (target === "find") {
     onFind();
     return;
@@ -9,3 +9,7 @@ export function runForKeyboardTarget(target, { onFind, onReplace, onDocument }) 
   }
   onDocument();
 }
+
+export default {
+  runForKeyboardTarget,
+};

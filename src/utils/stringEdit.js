@@ -1,3 +1,7 @@
-export function deleteLastWordInString(s) {
+function deleteLastWordInString(s) {
   return s.trimEnd().replace(/\S+\s*$/, "");
 }
+
+export default {
+  deleteLastWordInString,
+};

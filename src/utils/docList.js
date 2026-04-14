@@ -1,14 +1,14 @@
-export function findActiveDoc(docs, activeId) {
+function findActiveDoc(docs, activeId) {
   return docs.find((d) => d.id === activeId);
 }
 
-export function mapActiveDocContent(docs, activeId, nextContent) {
+function mapActiveDocContent(docs, activeId, nextContent) {
   return docs.map((d) =>
     d.id === activeId ? { ...d, content: nextContent } : d
   );
 }
 
-export function appendCharToActiveDoc(docs, activeId, char, style) {
+function appendCharToActiveDoc(docs, activeId, char, style) {
   return docs.map((d) =>
     d.id === activeId
       ? { ...d, content: [...d.content, { char, style: { ...style } }] }
@@ -16,8 +16,15 @@ export function appendCharToActiveDoc(docs, activeId, char, style) {
   );
 }
 
-export function removeLastCharFromActiveDoc(docs, activeId) {
+function removeLastCharFromActiveDoc(docs, activeId) {
   return docs.map((d) =>
     d.id === activeId ? { ...d, content: d.content.slice(0, -1) } : d
   );
 }
+
+export default {
+  findActiveDoc,
+  mapActiveDocContent,
+  appendCharToActiveDoc,
+  removeLastCharFromActiveDoc,
+};

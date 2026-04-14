@@ -1,6 +1,5 @@
-import {
-  segmentOverlapsHighlightRanges,
-} from "../utils/segmentText.js";
+import segmentText from "../utils/segmentText.js";
+const { segmentOverlapsHighlightRanges } = segmentText;
 
 function DisplayArea({
   content,

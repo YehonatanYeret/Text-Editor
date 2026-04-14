@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { DEFAULT_TEXT_STYLE } from "../constants/editor.js";
+import editor from "../constants/editor.js";
+const { DEFAULT_TEXT_STYLE } = editor;
 
 /**
  * Manages the current text-formatting style (font size, color, font family).
  */
-export function useTextStyle() {
+export default function useTextStyle() {
   const [currentStyle, setCurrentStyle] = useState(() => ({
     ...DEFAULT_TEXT_STYLE,
   }));

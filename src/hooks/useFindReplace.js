@@ -1,15 +1,13 @@
 import { useState } from "react";
-import {
-  countOccurrencesInString,
-  segmentsToString,
-} from "../utils/segmentText.js";
+import segmentText from "../utils/segmentText.js";
+const { countOccurrencesInString, segmentsToString } = segmentText;
 
 /**
  * Manages find / replace query strings and the derived match count.
  *
  * @param {Object} activeDoc - The currently-active document (needs `.content`).
  */
-export function useFindReplace(activeDoc) {
+export default function useFindReplace(activeDoc) {
   const [findQuery, setFindQuery] = useState("");
   const [replaceQuery, setReplaceQuery] = useState("");
 

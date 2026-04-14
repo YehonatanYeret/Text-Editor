@@ -1,16 +1,11 @@
-import { deleteLastWordInString } from "../utils/stringEdit.js";
-import { runForKeyboardTarget } from "../utils/keyboardTarget.js";
-import {
-  segmentsAfterDeletingLastWord,
-  replaceAllInSegments,
-  segmentsEqual,
-} from "../utils/segmentText.js";
-import {
-  findActiveDoc,
-  mapActiveDocContent,
-  appendCharToActiveDoc,
-  removeLastCharFromActiveDoc,
-} from "../utils/docList.js";
+import stringEdit from "../utils/stringEdit.js";
+const { deleteLastWordInString } = stringEdit;
+import keyboardTarget from "../utils/keyboardTarget.js";
+const { runForKeyboardTarget } = keyboardTarget;
+import segmentText from "../utils/segmentText.js";
+const { segmentsAfterDeletingLastWord, replaceAllInSegments, segmentsEqual } = segmentText;
+import docList from "../utils/docList.js";
+const { findActiveDoc, mapActiveDocContent, appendCharToActiveDoc, removeLastCharFromActiveDoc } = docList;
 
 /**
  * Composes the core editing actions (append, delete, undo, replace-all, …)
@@ -19,7 +14,7 @@ import {
  * This hook owns no state of its own — it wires together the state from the
  * other hooks and returns ready-to-use action callbacks.
  */
-export function useEditorActions({
+export default function useEditorActions({
   keyboardTarget,
   docs,
   setDocs,
@@ -38,7 +33,7 @@ export function useEditorActions({
       onReplace: () => setReplaceQuery((q) => q + char),
       onDocument: () => {
         const doc = findActiveDoc(docs, activeId);
-        if (doc) pushUndoSnapshot(activeId, doc.content);
+        if (doc) pushUndoSnapshot(activeId, doc.content); // add to the undo stack, now we able to undo this action later
         setDocs((prev) =>
           appendCharToActiveDoc(prev, activeId, char, currentStyle)
         );
@@ -53,7 +48,7 @@ export function useEditorActions({
       onDocument: () => {
         const doc = findActiveDoc(docs, activeId);
         if (!doc || doc.content.length === 0) return;
-        pushUndoSnapshot(activeId, doc.content);
+        pushUndoSnapshot(activeId, doc.content); // add to the undo stack, now we able to undo this action later
         setDocs((prev) => removeLastCharFromActiveDoc(prev, activeId));
       },
     });
@@ -68,7 +63,7 @@ export function useEditorActions({
         if (!doc) return;
         const next = segmentsAfterDeletingLastWord(doc.content);
         if (next.length === doc.content.length) return;
-        pushUndoSnapshot(activeId, doc.content);
+        pushUndoSnapshot(activeId, doc.content); // add to the undo stack, now we able to undo this action later
         setDocs((prev) => mapActiveDocContent(prev, activeId, next));
       },
     });
@@ -81,7 +76,7 @@ export function useEditorActions({
       onDocument: () => {
         const doc = findActiveDoc(docs, activeId);
         if (!doc || doc.content.length === 0) return;
-        pushUndoSnapshot(activeId, doc.content);
+        pushUndoSnapshot(activeId, doc.content); // add to the undo stack, now we able to undo this action later
         setDocs((prev) => mapActiveDocContent(prev, activeId, []));
       },
     });
@@ -106,7 +101,7 @@ export function useEditorActions({
     );
     if (segmentsEqual(next, doc.content)) return;
 
-    pushUndoSnapshot(activeId, doc.content);
+    pushUndoSnapshot(activeId, doc.content); // add to the undo stack, now we able to undo this action later
     setDocs((prev) => mapActiveDocContent(prev, activeId, next));
   };
 

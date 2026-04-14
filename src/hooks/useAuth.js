@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { attemptLogin } from "../utils/userStorage.js";
+import userStorage from "../utils/userStorage.js";
+const { attemptLogin } = userStorage;
 
 /**
  * Manages authentication state: current user, login, and exposes
  * setCurrentUser so the parent can clear it on logout.
  */
-export function useAuth() {
+export default function useAuth() {
   const [currentUser, setCurrentUser] = useState(null);
 
   const handleLogin = (username, password) => {

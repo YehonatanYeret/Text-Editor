@@ -1,7 +1,7 @@
 /**
  * Word = last run of non-whitespace segments; `/u` catches unicode spaces, not just ASCII.
  */
-export function segmentsAfterDeletingLastWord(segments) {
+function segmentsAfterDeletingLastWord(segments) {
   if (!segments.length) return segments;
 
   let end = segments.length - 1;
@@ -17,20 +17,20 @@ export function segmentsAfterDeletingLastWord(segments) {
   return segments.slice(0, start + 1);
 }
 
-export function segmentsToString(segments) {
+function segmentsToString(segments) {
   return segments.map((s) => s.char).join("");
 }
 
-export function cloneSegments(segments) {
+function cloneSegments(segments) {
   return JSON.parse(JSON.stringify(segments));
 }
 
-export function segmentsEqual(a, b) {
+function segmentsEqual(a, b) {
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
 /** Non-overlapping left-to-right scan (same rule as replace). */
-export function countOccurrencesInString(text, query) {
+function countOccurrencesInString(text, query) {
   if (!query) return 0;
   let n = 0;
   let i = 0;
@@ -46,7 +46,7 @@ export function countOccurrencesInString(text, query) {
 }
 
 /** [start, end) string indices for highlighting the active document. */
-export function highlightRangesForQuery(text, query) {
+function highlightRangesForQuery(text, query) {
   if (!query) return [];
   const ranges = [];
   let i = 0;
@@ -61,7 +61,7 @@ export function highlightRangesForQuery(text, query) {
   return ranges;
 }
 
-export function segmentOverlapsHighlightRanges(segStart, segEnd, ranges) {
+function segmentOverlapsHighlightRanges(segStart, segEnd, ranges) {
   return ranges.some(([a, b]) => segEnd > a && segStart < b);
 }
 
@@ -69,7 +69,7 @@ export function segmentOverlapsHighlightRanges(segStart, segEnd, ranges) {
  * Walks segments in lockstep with split pieces so emoji / multi-code-unit keys stay aligned.
  * Inserted characters copy the style of the first segment inside each match (fallback if empty).
  */
-export function replaceAllInSegments(segments, findStr, replaceStr, fallbackStyle) {
+function replaceAllInSegments(segments, findStr, replaceStr, fallbackStyle) {
   if (!findStr) return segments;
   const full = segmentsToString(segments);
   if (!full.includes(findStr)) return segments;
@@ -111,3 +111,14 @@ export function replaceAllInSegments(segments, findStr, replaceStr, fallbackStyl
 
   return out;
 }
+
+export default {
+  segmentsAfterDeletingLastWord,
+  segmentsToString,
+  cloneSegments,
+  segmentsEqual,
+  countOccurrencesInString,
+  highlightRangesForQuery,
+  segmentOverlapsHighlightRanges,
+  replaceAllInSegments,
+};

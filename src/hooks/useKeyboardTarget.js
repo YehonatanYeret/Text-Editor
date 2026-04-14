@@ -4,7 +4,7 @@ import { useState } from "react";
  * Manages which input field receives virtual-keyboard input:
  * "document" | "find" | "replace".
  */
-export function useKeyboardTarget() {
+export default function useKeyboardTarget() {
   const [keyboardTarget, setKeyboardTarget] = useState("document");
 
   const setTargetDocument = () => setKeyboardTarget("document");

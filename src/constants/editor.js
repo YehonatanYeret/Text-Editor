@@ -1,11 +1,17 @@
-export const MAX_UNDO = 40;
+const MAX_UNDO = 40;
 
-export const DEFAULT_TEXT_STYLE = {
+const DEFAULT_TEXT_STYLE = {
   fontSize: "26px",
   color: "#e0e0e0",
   fontFamily: "Arial, sans-serif",
 };
 
-export function createEmptyDocument() {
+function createEmptyDocument() {
   return { id: Date.now(), content: [] };
 }
+
+export default {
+  MAX_UNDO,
+  DEFAULT_TEXT_STYLE,
+  createEmptyDocument,
+};

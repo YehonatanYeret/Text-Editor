@@ -1,13 +1,13 @@
 import { useState } from "react";
 import LoginPage from "./pages/LoginPage.jsx";
 import EditorPage from "./pages/EditorPage.jsx";
-import { useAuth } from "./hooks/useAuth.js";
-import { useDocuments } from "./hooks/useDocuments.js";
-import { useUndoHistory } from "./hooks/useUndoHistory.js";
-import { useFindReplace } from "./hooks/useFindReplace.js";
-import { useTextStyle } from "./hooks/useTextStyle.js";
-import { useKeyboardTarget } from "./hooks/useKeyboardTarget.js";
-import { useEditorActions } from "./hooks/useEditorActions.js";
+import useAuth from "./hooks/useAuth.js";
+import useDocuments from "./hooks/useDocuments.js";
+import useUndoHistory from "./hooks/useUndoHistory.js";
+import useFindReplace from "./hooks/useFindReplace.js";
+import useTextStyle from "./hooks/useTextStyle.js";
+import useKeyboardTarget from "./hooks/useKeyboardTarget.js";
+import useEditorActions from "./hooks/useEditorActions.js";
 
 /** Root component: composes custom hooks and delegates UI to LoginPage / EditorPage */
 function App() {
