@@ -83,11 +83,13 @@ function replaceAllInSegments(segments, findStr, replaceStr, fallbackStyle) {
   if (!full.includes(findStr)) return segments; // we didn't found the string in "segments"
 
    // split the full string into chunks that are separated by "findStr".
-   // For example, if full = "abcdeabc" and findStr = "bc", then chunks = ["a", "de", "a", ""]
+   // For example, if full = "abcdeabc" and findStr = "bc", then chunks = ["a", "dea", ""]
   const chunks = full.split(findStr);
   const out = [];
   let segCursor = 0;
 
+  // takes letter after letter from the strings in "chunks" and matches them with the segments in "segments".
+  // ["a", "dea", ""] -> {char: "a", style: ...}, {char: "d", style: ...}, {char: "e", style: ...}, {char: "a", style: ...}
   for (let c = 0; c < chunks.length; c++) {
     const piece = chunks[c];
     let taken = 0;
@@ -102,14 +104,15 @@ function replaceAllInSegments(segments, findStr, replaceStr, fallbackStyle) {
     }
 
     if (c < chunks.length - 1) {
-      const baseStyle = segments[segCursor]?.style || fallbackStyle;
-      for (let j = 0; j < replaceStr.length; j++) {
+      const baseStyle = segments[segCursor]?.style || fallbackStyle; // takes the style from the other segments
+      for (let j = 0; j < replaceStr.length; j++) { // adds the replaceStr with the style
         out.push({
           char: replaceStr[j],
           style: { ...baseStyle },
         });
       }
-      let skip = findStr.length;
+      // skip the "findStr" in the segments, because we already added "replaceStr" instead of it
+      let skip = findStr.length; 
       while (skip > 0) {
         const seg = segments[segCursor];
         if (!seg) return segments;
